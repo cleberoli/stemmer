@@ -1,45 +1,98 @@
+/*
+ * Copyright 2017 - Cleber Oliveira and Wladmir Brandao
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * The definition of the Porter 2 stemmer for English can be found at
+ *
+ * http://snowball.tartarus.org/algorithms/english/stemmer.html
+ *
+ */
+
 package stemmer.english.EnBsl;
 
-public class Porter2 {
+import stemmer.Stemmer;
+
+public class Porter2Bsl extends Stemmer {
 
     protected StringBuffer current;
     private boolean B_Y_found;
     private int I_p2;
     private int I_p1;
 
-    public Porter2() {
+    public Porter2Bsl() {
         current = new StringBuffer();
         setCurrent("");
     }
 
+    /*
+     * Define a vowel as one of
+     * a   e   i   o   u   y
+     */
     private boolean isVowel(char c) {
         return ((c == 'a') || (c == 'e') || (c == 'i') || (c == 'o') || (c == 'u') || (c == 'y'));
     }
 
-    private boolean hasVowel(String s) {
-        for (int i = 0; i < s.length(); i++) {
-            if (isVowel(s.charAt(i)))
-                return true;
-        }
-
-        return false;
-    }
-
+    /*
+     * Define a double as one of
+     * bb   dd   ff   gg   mm   nn   pp   rr   tt
+     */
     private boolean endsWithDouble(String s) {
-        return (s.endsWith("bb") || s.endsWith("bb") || s.endsWith("dd") || s.endsWith("ff") || s.endsWith("gg") ||
-                s.endsWith("mm") || s.endsWith("nn") || s.endsWith("pp") || s.endsWith("rr") || s.endsWith("tt"));
+        return (s.endsWith("bb") || s.endsWith("dd") || s.endsWith("ff") || s.endsWith("gg") || s.endsWith("mm") ||
+                s.endsWith("nn") || s.endsWith("pp") || s.endsWith("rr") || s.endsWith("tt"));
     }
 
+    /*
+     * Define a valid li-ending as one of
+     * c   d   e   g   h   k   m   n   r   t
+     */
+    private boolean inLI(int index) {
+        if (index < 0 || index >= current.length())
+            return false;
+        else {
+            char c = current.toString().charAt(index);
+
+            return c == 'c' || c == 'd' || c == 'e' || c == 'g' || c == 'h' || c == 'k' || c == 'm' || c == 'n' || c == 'r' || c == 't';
+        }
+    }
+
+    /*
+     * R1 is the region after the first non-vowel following a vowel, or the end of the word if there is no such non-vowel.
+     */
     private String r1() {
         String str = current.toString();
         return (I_p1 >= str.length()) ? "" : str.substring(I_p1, str.length());
     }
 
+    /*
+     * R2 is the region after the first non-vowel following a vowel in R1, or the end of the word if there is no such non-vowel.
+     */
     private String r2() {
         String str = current.toString();
         return (I_p2 >= str.length()) ? "" : str.substring(I_p2, str.length());
     }
 
+    /*
+     * Define a short syllable in a word as either (a) a vowel followed by a non-vowel other than w, x or Y and
+     * preceded by a non-vowel, or * (b) a vowel at the beginning of the word followed by a non-vowel.
+     */
+    private boolean shortV(int index) {
+        if ((outVWXY(index - 1)) && (inV(index - 2)) && (outV(index - 3)))
+            return true;
+
+        if((outV(index - 1)) && (inV(index - 2)) && (index <= 2))
+            return true;
+
+        return false;
+    }
+
+    /*
+     * Remove initial ', if present. Then, set initial y, or y after a vowel, to Y.
+     */
     private String prelude() {
         String str = current.toString();
         B_Y_found = false;
@@ -62,11 +115,15 @@ public class Porter2 {
         return str;
     }
 
+    /*
+     * Establish the regions R1 and R2
+     */
     private void markRegions() {
         String str = current.toString();
         I_p1 = 0;
         I_p2 = 0;
 
+        // If the words begins gener, commun or arsen, set R1 to be the remainder of the word.
         if (str.startsWith("gener") || str.startsWith("arsen"))
             I_p1 = 5;
         else if (str.startsWith("commun"))
@@ -98,56 +155,13 @@ public class Porter2 {
             I_p2 = str.length();
     }
 
-    private boolean outVWXY(int index) {
-        if (index < 0 || index >= current.length())
-            return false;
-        else {
-            char c = current.toString().charAt(index);
-
-            return 'a' <= c && c <= 'z' && c != 'a' && c != 'e' && c != 'i' && c != 'o' && c != 'u' && c != 'w' && c != 'x' && c != 'y' && c != 'Y';
-        }
-    }
-
-    private boolean outV(int index) {
-        if (index < 0 || index >= current.length())
-            return false;
-        else {
-            char c = current.toString().charAt(index);
-
-            return ('a' <= c && c <= 'z' && c != 'a' && c != 'e' && c != 'i' && c != 'o' && c != 'u') || (c == 'Y');
-        }
-    }
-
-    private boolean inV(int index) {
-        if (index < 0 || index >= current.length())
-            return false;
-        else {
-            char c = current.toString().charAt(index);
-
-            return isVowel(c);
-        }
-    }
-
-    private boolean inLI(int index) {
-        if (index < 0 || index >= current.length())
-            return false;
-        else {
-            char c = current.toString().charAt(index);
-
-            return c == 'c' || c == 'd' || c == 'e' || c == 'g' || c == 'h' || c == 'k' || c == 'm' || c == 'n' || c == 'r' || c == 't';
-        }
-    }
-
-    private boolean shortV(int index) {
-        if ((outVWXY(index - 1)) && (inV(index - 2)) && (outV(index - 3)))
-            return true;
-
-        if((outV(index - 1)) && (inV(index - 2)) && (index <= 2))
-            return true;
-
-        return false;
-    }
-
+    /*
+     * Search for the longest among the suffixes,
+     * '
+     * 's
+     * 's'
+     * and remove if found.
+     */
     private String step0() {
         String str = current.toString();
 
@@ -161,6 +175,13 @@ public class Porter2 {
             return str;
     }
 
+    /*
+     * Search for the longest among the following suffixes, and perform the action indicated.
+     * sses     ->      replace by ss
+     * ied ies  ->      replace by i if preceded by more than one letter, otherwise by ie
+     * s        ->      delete if the preceding word part contains a vowel not immediately before the s
+     * us ss    ->      do nothing
+     */
     private String step1a() {
         String str = current.toString();
 
@@ -179,6 +200,14 @@ public class Porter2 {
             return str;
     }
 
+    /*
+     * Search for the longest among the following suffixes, and perform the action indicated.
+     * eed eedly            ->      replace by ee if in R1
+     * ed edly ing ingly    ->      delete if the preceding word part contains a vowel, and after the deletion:
+     *                              if the word ends at, bl or iz add e, or
+     *                              if the word ends with a double remove the last letter, or
+     *                              if the word is short, add e
+     */
     private String step1b() {
         String str = current.toString();
         String r1 = r1();
@@ -214,6 +243,9 @@ public class Porter2 {
         return str;
     }
 
+    /*
+     * Replace suffix y or Y by i if preceded by a non-vowel which is not the first letter of the word
+     */
     private String step1c() {
         String str = current.toString();
 
@@ -226,6 +258,25 @@ public class Porter2 {
             return str;
     }
 
+    /*
+     * Search for the longest among the following suffixes, and, if found and in R1, perform the action indicated.
+     * tional:   replace by tion
+     * enci:   replace by ence
+     * anci:   replace by ance
+     * abli:   replace by able
+     * entli:   replace by ent
+     * izer   ization:   replace by ize
+     * ational   ation   ator:   replace by ate
+     * alism   aliti   alli:   replace by al
+     * fulness:   replace by ful
+     * ousli   ousness:   replace by ous
+     * iveness   iviti:   replace by ive
+     * biliti   bli:   replace by ble
+     * ogi:   replace by og if preceded by l
+     * fulli:   replace by ful
+     * lessli:   replace by less
+     * li:   delete if preceded by a valid li-ending
+     */
     private String step2() {
         String str = current.toString();
         String r1 = r1();
@@ -284,6 +335,15 @@ public class Porter2 {
             return str;
     }
 
+    /*
+     * Search for the longest among the following suffixes, and, if found and in R1, perform the action indicated.
+     * tional:   replace by tion
+     * ational:   replace by ate
+     * alize:   replace by al
+     * icate   iciti   ical:   replace by ic
+     * ful   ness:   delete
+     * ative:   delete if in R2
+     */
     private String step3() {
         String str = current.toString();
         String r1 = r1();
@@ -311,6 +371,13 @@ public class Porter2 {
             return str;
     }
 
+    /*
+     * Search for the longest among the following suffixes, and, if found and in R2, perform the action indicated.
+     * al   ance   ence   er   ic   able   ible   ant   ement   ment   ent   ism   ate   iti   ous   ive   ize
+     * ->   delete
+     * ion
+     * ->   delete if preceded by s or t
+     */
     private String step4() {
         String str = current.toString();
         String r2 = r2();
@@ -355,6 +422,11 @@ public class Porter2 {
             return str;
     }
 
+    /*
+     * Search for the the following suffixes, and, if found, perform the action indicated.
+     * e    ->      delete if in R2, or in R1 and not preceded by a short syllable
+     * l    ->      delete if in R2 and preceded by l
+     */
     private String step5() {
         String str = current.toString();
 
@@ -369,17 +441,48 @@ public class Porter2 {
         return str;
     }
 
+    /*
+     * Finally, turn any remaining Y letters in the word back into lower case.
+     */
     private String postlude() {
         String str = current.toString();
         return B_Y_found ? str.replace('Y', 'y') : str;
     }
 
+    /*
+     * Following step 1a, leave the following invariant,
+     * inning  		  outing  		  canning  		  herring
+     * earring        proceed  		  exceed  		  succeed
+     */
     private boolean exception2() {
         String str = current.toString();
         return (str.equals("inning") || str.equals("outing") || str.equals("canning") || str.equals("herring") ||
                 str.equals("earring") || str.equals("proceed") || str.equals("exceed") || str.equals("succeed"));
     }
 
+    /*
+     * Stem certain special words as follows,
+     * skis		  ->  		ski
+     * skies	  ->  		sky
+     * dying      ->        die
+     * lying      ->        lie
+     * tying	  ->		tie
+     * idly       ->        idl
+     * gently     ->        gentl
+     * ugly       ->        ugli
+     * early      ->        earli
+     * only       ->        onli
+     * singly	  ->		singl
+     *
+     * If one of the following is found, leave it invariant,
+     * sky
+     * news
+     * howe
+     * atlas
+     * cosmos
+     * bias
+     * andes
+     */
     private boolean exception1() {
         String str = current.toString();
 
@@ -436,8 +539,48 @@ public class Porter2 {
         }
     }
 
+    private boolean outVWXY(int index) {
+        if (index < 0 || index >= current.length())
+            return false;
+        else {
+            char c = current.toString().charAt(index);
+
+            return 'a' <= c && c <= 'z' && c != 'a' && c != 'e' && c != 'i' && c != 'o' && c != 'u' && c != 'w' && c != 'x' && c != 'y' && c != 'Y';
+        }
+    }
+
+    private boolean outV(int index) {
+        if (index < 0 || index >= current.length())
+            return false;
+        else {
+            char c = current.toString().charAt(index);
+
+            return ('a' <= c && c <= 'z' && c != 'a' && c != 'e' && c != 'i' && c != 'o' && c != 'u') || (c == 'Y');
+        }
+    }
+
+    private boolean inV(int index) {
+        if (index < 0 || index >= current.length())
+            return false;
+        else {
+            char c = current.toString().charAt(index);
+
+            return isVowel(c);
+        }
+    }
+
+    private boolean hasVowel(String s) {
+        for (int i = 0; i < s.length(); i++) {
+            if (isVowel(s.charAt(i)))
+                return true;
+        }
+
+        return false;
+    }
+
     public boolean stem() {
         if (!exception1()) {
+            // If the word has two letters or less, leave it as it is.
             if (current.toString().length() >= 3) {
                 setCurrent(prelude());
                 markRegions();

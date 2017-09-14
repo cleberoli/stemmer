@@ -1,14 +1,49 @@
-package stemmer.test.Bsl;
+package stemmer;
 
+import stemmer.english.EnADS.Porter2ADS;
 import stemmer.english.EnBsl.Porter2Bsl;
 
 import java.io.*;
 
-public class EnBsl {
+public class StemmerTest {
 
-    private static long run(String inputFile, String outputFile) throws Exception {
+    private static void usage() {
+        System.err.println("Usage: StemmerTest <language> <algorithm> <input file> -o <output file>");
+    }
+
+    public static void main(String[] args) throws Throwable {
+        if (args.length < 2) {
+            usage();
+            return;
+        }
+
+        Stemmer stemmer = new Porter2ADS();
+
+        switch (args[0]) {
+            case "english" :
+                switch (args[1]) {
+                    case "bsl" :
+                        stemmer = new Porter2Bsl();
+                        break;
+                    case "ads" :
+                        stemmer = new Porter2ADS();
+                    defaultm:
+                        break;
+                }
+                break;
+            default :
+                break;
+        }
+
+        String inputFile = args[2];
+        String outputFile = args[4];
+
+        System.out.println(run(stemmer,inputFile, outputFile));
+
+    }
+
+    private static long run(Stemmer stemmer, String inputFile, String outputFile) throws Exception {
         long elapsedTime = 0;
-        Porter2Bsl stemmer = new Porter2Bsl();
         Reader reader = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile)));
         Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile)));
 
@@ -40,10 +75,4 @@ public class EnBsl {
         return elapsedTime;
     }
 
-    public static void main(String[] args) throws Exception {
-        String inputFile = "E:\\Documents\\git\\stemmer\\src\\resources\\p2_voc.txt";
-        String outputFile = "E:\\Documents\\git\\stemmer\\src\\resources\\p2_outvoc_bsl.txt";
-
-        System.out.println(run(inputFile, outputFile));
-    }
 }
