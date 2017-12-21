@@ -3334,7 +3334,7 @@ public class PorterStemmer extends Stemmer {
 
     public void test() {
 
-        String file = "wiki_00_es.txt";
+        String file = "E:\\Documents\\git\\stemmer\\src\\resources\\sp_voc.txt";
         String encoding = "UTF-8";
         BufferedReader input;
 

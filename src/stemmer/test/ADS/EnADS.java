@@ -1,6 +1,6 @@
 package stemmer.test.ADS;
 
-import stemmer.english.EnADS.Porter2ADS;
+import stemmer.english.ADSEnglishStemmer;
 
 import java.io.*;
 
@@ -8,7 +8,7 @@ public class EnADS {
 
     private static long run(String inputFile, String outputFile) throws Exception {
         long elapsedTime = 0;
-        Porter2ADS stemmer = new Porter2ADS();
+        ADSEnglishStemmer stemmer = new ADSEnglishStemmer();
         Reader reader = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile)));
         Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile)));
 

@@ -1,9 +1,6 @@
 package stemmer.spanish.SpBsl;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 
 public class PorterStemmer extends Stemmer {
 
@@ -426,7 +423,7 @@ public class PorterStemmer extends Stemmer {
 
     public void test() throws IOException {
 
-        String file = "wiki_00_es.txt";
+        String file = "E:\\Documents\\git\\stemmer\\src\\resources\\sp_voc.txt";
         String encoding = "UTF-8";
         BufferedReader input;
 
@@ -435,15 +432,20 @@ public class PorterStemmer extends Stemmer {
             input = new BufferedReader(new InputStreamReader(
                     new FileInputStream(file), encoding));
             String linea;
+            Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("E:\\Documents\\git\\stemmer\\src\\resources\\sp_out.txt"), encoding));
             while (input.ready()) {
                 String array[] = new String[2];
                 linea = input.readLine();
                 array = linea.split(" ");
                 if (array.length >= 1) {
-                    System.out.println(stem(array[0]));
+                    writer.write(stem(array[0]));
+                    writer.write('\n');
+                    //System.out.println(stem(array[0]));
                 }
 
             }
+
+            writer.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }

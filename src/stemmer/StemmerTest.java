@@ -1,7 +1,8 @@
 package stemmer;
 
-import stemmer.english.EnADS.Porter2ADS;
-import stemmer.english.EnBsl.Porter2Bsl;
+import stemmer.english.ADSEnglishStemmer;
+import stemmer.english.BSLEnglishStemmer;
+import stemmer.english.EnglishStemmer;
 
 import java.io.*;
 
@@ -12,22 +13,24 @@ public class StemmerTest {
     }
 
     public static void main(String[] args) throws Throwable {
-        if (args.length < 2) {
+        if (args.length != 5) {
             usage();
             return;
         }
 
-        Stemmer stemmer = new Porter2ADS();
+        Stemmer stemmer = new ADSEnglishStemmer();
 
         switch (args[0]) {
             case "english" :
                 switch (args[1]) {
                     case "bsl" :
-                        stemmer = new Porter2Bsl();
+                        stemmer = new BSLEnglishStemmer();
                         break;
                     case "ads" :
-                        stemmer = new Porter2ADS();
-                    defaultm:
+                        stemmer = new ADSEnglishStemmer();
+                        break;
+                    default:
+                        stemmer = new EnglishStemmer();
                         break;
                 }
                 break;

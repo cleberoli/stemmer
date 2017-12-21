@@ -1,6 +1,6 @@
 package stemmer.test.Bsl;
 
-import stemmer.english.EnBsl.Porter2Bsl;
+import stemmer.english.BSLEnglishStemmer;
 
 import java.io.*;
 
@@ -8,7 +8,7 @@ public class EnBsl {
 
     private static long run(String inputFile, String outputFile) throws Exception {
         long elapsedTime = 0;
-        Porter2Bsl stemmer = new Porter2Bsl();
+        BSLEnglishStemmer stemmer = new BSLEnglishStemmer();
         Reader reader = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile)));
         Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile)));
 
