@@ -2,7 +2,10 @@ package stemmer;
 
 import stemmer.english.ADSEnglishStemmer;
 import stemmer.english.BSLEnglishStemmer;
-import stemmer.english.EnglishStemmer;
+import stemmer.portuguese.ADSPortugueseStemmer;
+import stemmer.portuguese.BSLPortugueseStemmer;
+import stemmer.spanish.ADSSpanishStemmer;
+import stemmer.spanish.BSLSpanishStemmer;
 
 import java.io.*;
 
@@ -29,12 +32,27 @@ public class StemmerTest {
                     case "ads" :
                         stemmer = new ADSEnglishStemmer();
                         break;
-                    default:
-                        stemmer = new EnglishStemmer();
+                }
+                break;
+            case "spanish" :
+                switch (args[1]) {
+                    case "bsl" :
+                        stemmer = new BSLSpanishStemmer();
+                        break;
+                    case "ads" :
+                        stemmer = new ADSSpanishStemmer();
                         break;
                 }
                 break;
-            default :
+            case "portuguese" :
+                switch (args[1]) {
+                    case "bsl" :
+                        stemmer = new BSLPortugueseStemmer();
+                        break;
+                    case "ads" :
+                        stemmer = new ADSPortugueseStemmer();
+                        break;
+                }
                 break;
         }
 

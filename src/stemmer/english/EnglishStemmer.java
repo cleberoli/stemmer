@@ -437,15 +437,15 @@ public class EnglishStemmer extends Stemmer {
     }
 
     protected String step2() {
-        return "";
+        return current.toString();
     }
 
     protected String step3() {
-        return "";
+        return current.toString();
     }
 
     protected String step4() {
-        return "";
+        return current.toString();
     }
 
     /*
