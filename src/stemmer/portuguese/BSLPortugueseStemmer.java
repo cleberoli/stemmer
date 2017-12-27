@@ -177,4 +177,5 @@ public class BSLPortugueseStemmer extends PortugueseStemmer {
         s2 = !str.substring(0, str.length() - suffixLength).equals(current.toString());
         return str.substring(0, str.length() - suffixLength);
     }
+
 }
