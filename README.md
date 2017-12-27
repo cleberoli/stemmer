@@ -1,5 +1,8 @@
 # Stemming
-Implementation of some stemming algorithms implemented as the origianl proposals, and using deterministic finite automata in a level of character and bits. The current version of the project is test for only English language.
+Implementation of some stemming algorithms implemented as the origianl proposals, and using deterministic finite automata in a level of character. The current version of the project works for the languages:
+* English
+* Portuguese
+* Spanish
 
 ## Running the tests
 To run the tests available you only need to run the StemmerTest with the following arguments:
