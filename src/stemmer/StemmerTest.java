@@ -11,12 +11,14 @@ import java.io.*;
 
 public class StemmerTest {
 
+    private static int INTERVAL = 50;
+
     private static void usage() {
-        System.err.println("Usage: StemmerTest <language> <algorithm> <input file> -o <output file>");
+        System.err.println("Usage: StemmerTest <language> <algorithm> <input file> -o <output file> [-t <interval>]");
     }
 
     public static void main(String[] args) throws Throwable {
-        if (args.length != 5) {
+        if (args.length != 5 && args.length != 7) {
             usage();
             return;
         }
@@ -59,8 +61,10 @@ public class StemmerTest {
         String inputFile = args[2];
         String outputFile = args[4];
 
-        System.out.println(run(stemmer,inputFile, outputFile));
+        if (args.length == 7)
+            INTERVAL = Integer.parseInt(args[6]) > 50 ? Integer.parseInt(args[6]) : 50;
 
+        System.out.println("Elapsed time: " + run(stemmer,inputFile, outputFile));
     }
 
     private static long run(Stemmer stemmer, String inputFile, String outputFile) throws Exception {
@@ -71,6 +75,9 @@ public class StemmerTest {
         StringBuffer input = new StringBuffer();
 
         int character;
+        int cummulativeWordCount = 0;
+        int wordCount = 0;
+        int turns = 0;
 
         while((character = reader.read()) != -1) {
             char ch = (char) character;
@@ -82,6 +89,16 @@ public class StemmerTest {
                     stemmer.stem();
                     long end = System.currentTimeMillis();
                     elapsedTime += (end - begin);
+
+                    if ((elapsedTime - INTERVAL*turns) >= INTERVAL) {
+                        turns++;
+                        System.out.printf("Time: %d \t Words: %d \t Total: %d\n", elapsedTime, wordCount, cummulativeWordCount);
+                        wordCount = 0;
+                    } else {
+                        cummulativeWordCount++;
+                        wordCount++;
+                    }
+
                     writer.write(stemmer.getCurrent());
                     writer.write('\n');
                     input.delete(0, input.length());
@@ -90,6 +107,8 @@ public class StemmerTest {
                 input.append(Character.toLowerCase(ch));
             }
         }
+
+        System.out.printf("Time: %d \t Words: %d \t Total: %d\n", elapsedTime, wordCount, cummulativeWordCount);
 
         writer.flush();
 
