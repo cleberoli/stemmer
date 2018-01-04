@@ -1,11 +1,11 @@
 # Stemming
-Implementation of some stemming algorithms implemented as the origianl proposals, and using deterministic finite automata in a level of character. The current version of the project works for the languages:
+Implementation of stemming algorithms using deterministic finite automata in a level of character. The current version of the project works for the languages:
 * English
 * Portuguese
 * Spanish
 
 ## Running the tests
-To run the tests available you only need to run the StemmerTest with the following arguments:
+To run the tests you only need to run the StemmerTest with the following arguments:
 ```
 <language> <algorithm> <input file> -o <output file> [-t <interval>]
 ```
@@ -13,7 +13,7 @@ where _language_ is **english**, **portuguese** or **spanish**; _algorithm_ can 
 
 ## Contributors
 * Cleber Oliveira
-* Wladmir Brandao
+* Wladmir Cardoso Brandão
 
 ## License
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
