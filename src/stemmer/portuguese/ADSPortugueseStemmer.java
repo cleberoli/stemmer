@@ -1698,7 +1698,6 @@ public class ADSPortugueseStemmer extends PortugueseStemmer {
         String str = current.toString();
         String rv = '*' + rV();
         String suffix = "";
-        String longestSuffix = "";
         char ch;
         int suffixSize = 0;
         int cursor = rv.length() - 1;
@@ -1779,11 +1778,16 @@ public class ADSPortugueseStemmer extends PortugueseStemmer {
                             state = 2;
                             break;
                         case 'i':
-                            longestSuffix = "ia";
-                            suffix = ch + suffix;
-                            suffixSize++;
-                            cursor--;
-                            state = 3;
+                            if ((rv.charAt(cursor - 1) == 'r') && (rv.charAt(cursor - 2) == 'a' || rv.charAt(cursor - 2) == 'e' || rv.charAt(cursor - 2) == 'i')) {
+                                suffix = ch + suffix;
+                                suffixSize++;
+                                cursor--;
+                                state = 3;
+                            } else {
+                                suffix = ch + suffix;
+                                suffixSize++;
+                                state = 200;
+                            }
                             break;
                         case 'r':
                             suffix = ch + suffix;
@@ -2005,11 +2009,16 @@ public class ADSPortugueseStemmer extends PortugueseStemmer {
                 case 12: // e(13)
                     switch (ch) {
                         case 'e':
-                            longestSuffix = "ei";
-                            suffix = ch + suffix;
-                            suffixSize++;
-                            cursor--;
-                            state = 13;
+                            if ((rv.charAt(cursor - 1) == 'r') && (rv.charAt(cursor - 2) == 'a' || rv.charAt(cursor - 2) == 'e' || rv.charAt(cursor - 2) == 'i')) {
+                                suffix = ch + suffix;
+                                suffixSize++;
+                                cursor--;
+                                state = 13;
+                            } else {
+                                suffix = ch + suffix;
+                                suffixSize++;
+                                state = 200;
+                            }
                             break;
                         default:
                             suffixSize = 0;
@@ -2059,18 +2068,28 @@ public class ADSPortugueseStemmer extends PortugueseStemmer {
                 case 15: // a(16), e(21)
                     switch (ch) {
                         case 'a':
-                            longestSuffix = "am";
-                            suffix = ch + suffix;
-                            suffixSize++;
-                            cursor--;
-                            state = 16;
+                            if ((rv.charAt(cursor - 1) == 'i') || ((rv.charAt(cursor - 1) == 'r') && (rv.charAt(cursor - 2) == 'a' || rv.charAt(cursor - 2) == 'e' || rv.charAt(cursor - 2) == 'i')) || (rv.charAt(cursor - 1) == 'v' && rv.charAt(cursor - 2) == 'a')) {
+                                suffix = ch + suffix;
+                                suffixSize++;
+                                cursor--;
+                                state = 16;
+                            } else {
+                                suffix = ch + suffix;
+                                suffixSize++;
+                                state = 200;
+                            }
                             break;
                         case 'e':
-                            longestSuffix = "em";
-                            suffix = ch + suffix;
-                            suffixSize++;
-                            cursor--;
-                            state = 21;
+                            if (((rv.charAt(cursor - 1) == 'r') && (rv.charAt(cursor - 2) == 'a' || rv.charAt(cursor - 2) == 'e' || rv.charAt(cursor - 2) == 'i')) || (rv.charAt(cursor - 1) == 's' && rv.charAt(cursor - 2) == 's' && (rv.charAt(cursor - 3) == 'a' || rv.charAt(cursor - 3) == 'e' || rv.charAt(cursor - 3) == 'i'))) {
+                                suffix = ch + suffix;
+                                suffixSize++;
+                                cursor--;
+                                state = 21;
+                            } else {
+                                suffix = ch + suffix;
+                                suffixSize++;
+                                state = 200;
+                            }
                             break;
                         default:
                             suffixSize = 0;
@@ -2081,11 +2100,16 @@ public class ADSPortugueseStemmer extends PortugueseStemmer {
                 case 16: // i(17), r(19), v(20), ~(200)
                     switch (ch) {
                         case 'i':
-                            longestSuffix = "iam";
-                            suffix = ch + suffix;
-                            suffixSize++;
-                            cursor--;
-                            state = 17;
+                            if (rv.charAt(cursor - 1) == 'r' && (rv.charAt(cursor - 2) == 'a' || rv.charAt(cursor - 2) == 'e' || rv.charAt(cursor - 2) == 'i')) {
+                                suffix = ch + suffix;
+                                suffixSize++;
+                                cursor--;
+                                state = 17;
+                            } else {
+                                suffix = ch + suffix;
+                                suffixSize++;
+                                state = 200;
+                            }
                             break;
                         case 'r':
                             suffix = ch + suffix;
@@ -2423,25 +2447,46 @@ public class ADSPortugueseStemmer extends PortugueseStemmer {
                 case 32: // a(33), e(39), i(47), o(56), á(69)
                     switch (ch) {
                         case 'a':
-                            longestSuffix = "as";
-                            suffix = ch + suffix;
-                            suffixSize++;
-                            cursor--;
-                            state = 33;
+                            if ((rv.charAt(cursor - 1) == 'd' && (rv.charAt(cursor - 2) == 'a' || rv.charAt(cursor - 2) == 'i')) ||
+                                    (rv.charAt(cursor - 1) == 'i') ||
+                                    (rv.charAt(cursor - 1) == 'r' && (rv.charAt(cursor - 2) == 'a' || rv.charAt(cursor - 2) == 'e' || rv.charAt(cursor - 2) == 'i')) ||
+                                    (rv.charAt(cursor - 1) == 'v' && rv.charAt(cursor - 2) == 'a')) {
+                                suffix = ch + suffix;
+                                suffixSize++;
+                                cursor--;
+                                state = 33;
+                            } else {
+                                suffix = ch + suffix;
+                                suffixSize++;
+                                state = 200;
+                            }
                             break;
                         case 'e':
-                            longestSuffix = "es";
-                            suffix = ch + suffix;
-                            suffixSize++;
-                            cursor--;
-                            state = 39;
+                            if ((rv.charAt(cursor - 1) == 'd' && rv.charAt(cursor - 2) == 'r' && (rv.charAt(cursor - 3) == 'a' || rv.charAt(cursor - 3) == 'e' || rv.charAt(cursor - 3) == 'i')) ||
+                                    (rv.charAt(cursor - 1) == 'r' && (rv.charAt(cursor - 2) == 'a' || rv.charAt(cursor - 2) == 'e' || rv.charAt(cursor - 2) == 'i')) ||
+                                    (rv.charAt(cursor - 1) == 's' && rv.charAt(cursor - 2) == 's' && (rv.charAt(cursor - 3) == 'a' || rv.charAt(cursor - 3) == 'e' || rv.charAt(cursor - 3) == 'i')) ||
+                                    (rv.charAt(cursor - 1) == 't' && rv.charAt(cursor - 2) == 's' && (rv.charAt(cursor - 3) == 'a' || rv.charAt(cursor - 3) == 'e' || rv.charAt(cursor - 3) == 'i'))) {
+                                suffix = ch + suffix;
+                                suffixSize++;
+                                cursor--;
+                                state = 39;
+                            } else {
+                                suffix = ch + suffix;
+                                suffixSize++;
+                                state = 200;
+                            }
                             break;
                         case 'i':
-                            longestSuffix = "is";
-                            suffix = ch + suffix;
-                            suffixSize++;
-                            cursor--;
-                            state = 47;
+                            if (rv.charAt(cursor - 1) == 'a' || rv.charAt(cursor - 1) == 'e') {
+                                suffix = ch + suffix;
+                                suffixSize++;
+                                cursor--;
+                                state = 47;
+                            } else {
+                                suffix = ch + suffix;
+                                suffixSize++;
+                                state = 200;
+                            }
                             break;
                         case 'o':
                             suffix = ch + suffix;
@@ -2470,11 +2515,16 @@ public class ADSPortugueseStemmer extends PortugueseStemmer {
                             state = 34;
                             break;
                         case 'i':
-                            longestSuffix = "ias";
-                            suffix = ch + suffix;
-                            suffixSize++;
-                            cursor--;
-                            state = 35;
+                            if (rv.charAt(cursor - 1) == 'r' && (rv.charAt(cursor - 2) == 'a' || rv.charAt(cursor - 2) == 'e' || rv.charAt(cursor - 2) == 'i')) {
+                                suffix = ch + suffix;
+                                suffixSize++;
+                                cursor--;
+                                state = 35;
+                            } else {
+                                suffix = ch + suffix;
+                                suffixSize++;
+                                state = 200;
+                            }
                             break;
                         case 'r':
                             suffix = ch + suffix;
@@ -2778,11 +2828,19 @@ public class ADSPortugueseStemmer extends PortugueseStemmer {
                             state = 200;
                             break;
                         case 'e':
-                            longestSuffix = "eis";
-                            suffix = ch + suffix;
-                            suffixSize++;
-                            cursor--;
-                            state = 49;
+                            if ((rv.charAt(cursor - 1) == 'r' && (rv.charAt(cursor - 2) == 'a' || rv.charAt(cursor - 2) == 'e' || rv.charAt(cursor - 2) == 'i' || rv.charAt(cursor - 2) == 'á' || rv.charAt(cursor - 2) == 'é' || rv.charAt(cursor - 2) == 'í')) ||
+                                    (rv.charAt(cursor - 1) == 's' && rv.charAt(cursor - 2) == 's' && (rv.charAt(cursor - 3) == 'á' || rv.charAt(cursor - 3) == 'é' || rv.charAt(cursor - 3) == 'í')) ||
+                                    (rv.charAt(cursor - 1) == 'v' && rv.charAt(cursor - 2) == 'á') ||
+                                    (rv.charAt(cursor - 1) == 'í')) {
+                                suffix = ch + suffix;
+                                suffixSize++;
+                                cursor--;
+                                state = 49;
+                            } else {
+                                suffix = ch + suffix;
+                                suffixSize++;
+                                state = 200;
+                            }
                             break;
                         default: // is
                             state = 200;
@@ -2823,11 +2881,16 @@ public class ADSPortugueseStemmer extends PortugueseStemmer {
                             state = 53;
                             break;
                         case 'í':
-                            longestSuffix = "íeis";
-                            suffix = ch + suffix;
-                            suffixSize++;
-                            cursor--;
-                            state = 54;
+                            if (rv.charAt(cursor - 1) == 'r' && (rv.charAt(cursor - 2) == 'a' || rv.charAt(cursor - 2) == 'e' || rv.charAt(cursor - 2) == 'i')) {
+                                suffix = ch + suffix;
+                                suffixSize++;
+                                cursor--;
+                                state = 54;
+                            } else {
+                                suffix = ch + suffix;
+                                suffixSize++;
+                                state = 200;
+                            }
                             break;
                         default: // eis
                             state = 200;
@@ -3014,18 +3077,31 @@ public class ADSPortugueseStemmer extends PortugueseStemmer {
                 case 58: // a(59), e(64), i(200), r(68), á(200)
                     switch (ch) {
                         case 'a':
-                            longestSuffix = "amos";
-                            suffix = ch + suffix;
-                            suffixSize++;
-                            cursor--;
-                            state = 59;
+                            if ((rv.charAt(cursor - 1) == 'r' && (rv.charAt(cursor - 2) == 'á' || rv.charAt(cursor - 2) == 'é' || rv.charAt(cursor - 2) == 'í')) ||
+                                    (rv.charAt(cursor - 1) == 'v' && rv.charAt(cursor - 2) == 'á') ||
+                                    (rv.charAt(cursor - 1) == 'í')) {
+                                suffix = ch + suffix;
+                                suffixSize++;
+                                cursor--;
+                                state = 59;
+                            } else {
+                                suffix = ch + suffix;
+                                suffixSize++;
+                                state = 200;
+                            }
                             break;
                         case 'e':
-                            longestSuffix = "emos";
-                            suffix = ch + suffix;
-                            suffixSize++;
-                            cursor--;
-                            state = 64;
+                            if ((rv.charAt(cursor - 1) == 'r' && (rv.charAt(cursor - 2) == 'a' || rv.charAt(cursor - 2) == 'e' || rv.charAt(cursor - 2) == 'i')) ||
+                                    (rv.charAt(cursor - 1) == 's' && rv.charAt(cursor - 2) == 's' && (rv.charAt(cursor - 3) == 'á' || rv.charAt(cursor - 3) == 'ê' || rv.charAt(cursor - 3) == 'í'))) {
+                                suffix = ch + suffix;
+                                suffixSize++;
+                                cursor--;
+                                state = 64;
+                            } else {
+                                suffix = ch + suffix;
+                                suffixSize++;
+                                state = 200;
+                            }
                             break;
                         case 'i': // imos
                             suffix = ch + suffix;
@@ -3066,11 +3142,16 @@ public class ADSPortugueseStemmer extends PortugueseStemmer {
                             state = 61;
                             break;
                         case 'í':
-                            longestSuffix = "íamos";
-                            suffix = ch + suffix;
-                            suffixSize++;
-                            cursor--;
-                            state = 62;
+                            if (rv.charAt(cursor - 1) == 'r' && (rv.charAt(cursor - 2) == 'a' || rv.charAt(cursor - 2) == 'e' || rv.charAt(cursor - 2) == 'i')) {
+                                suffix = ch + suffix;
+                                suffixSize++;
+                                cursor--;
+                                state = 62;
+                            } else {
+                                suffix = ch + suffix;
+                                suffixSize++;
+                                state = 200;
+                            }
                             break;
                         default: // amos
                             state = 200;
@@ -3378,9 +3459,6 @@ public class ADSPortugueseStemmer extends PortugueseStemmer {
                     break;
             }
         }
-
-        if (suffixSize == 0)
-            suffixSize = longestSuffix.length();
 
         s2 = !str.substring(0, str.length() - suffixSize).equals(current.toString());
         return str.substring(0, str.length() - suffixSize);
