@@ -4,6 +4,7 @@ import stemmer.english.ADSEnglishStemmer;
 import stemmer.english.BSLEnglishStemmer;
 import stemmer.portuguese.ADSPortugueseStemmer;
 import stemmer.portuguese.BSLPortugueseStemmer;
+import stemmer.portuguese.HYBPortugueseStemmer;
 import stemmer.spanish.ADSSpanishStemmer;
 import stemmer.spanish.BSLSpanishStemmer;
 
@@ -53,6 +54,9 @@ public class StemmerTest {
                         break;
                     case "ads" :
                         stemmer = new ADSPortugueseStemmer();
+                        break;
+                    case "hyb" :
+                        stemmer = new HYBPortugueseStemmer();
                         break;
                 }
                 break;
